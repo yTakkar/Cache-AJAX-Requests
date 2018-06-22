@@ -14,7 +14,6 @@ class GetUserRepos extends React.Component {
     })
 
   workWithRepos = repos => {
-    console.log(repos.length)
     this.setState(prevState => ({
       repos
     }))
