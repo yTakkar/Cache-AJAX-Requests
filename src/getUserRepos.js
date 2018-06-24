@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 
 class GetUserRepos extends React.Component {
   state = {
@@ -19,21 +18,32 @@ class GetUserRepos extends React.Component {
     }))
   }
 
+  fetch = () => {
+    let { cache, username } = this.state
+    let cacheHandle = username
+
+    fetch(`https://api.github.com/users/${cacheHandle}/repos`)
+      .then(resp => resp.json())
+      .then(resp => {
+        if (Array.isArray(resp)) {
+          cache[cacheHandle] = resp
+          this.workWithRepos(resp)
+        }
+      })
+      .catch(e => console.error(e))
+  }
+
   getRepos = () => {
     let { cache, username } = this.state
     let cacheHandle = username
 
+    // If request is already cached, don't request repos
     if (cache[cacheHandle]) {
-      console.log('cached before')
+      console.log(`${cacheHandle} cached before!!`)
       this.workWithRepos(cache[cacheHandle])
     } else {
-      fetch(`https://api.github.com/users/${cacheHandle}/repos`)
-        .then(resp => resp.json())
-        .then(resp => {
-          cache[cacheHandle] = resp
-          this.workWithRepos(resp)
-        })
-        .catch(e => console.error(e))
+      // else request repos
+      this.fetch()
     }
   }
 
@@ -51,13 +61,14 @@ class GetUserRepos extends React.Component {
       <React.Fragment>
         <input
           type="text"
+          placeholder="Enter username"
           value={username}
           onChange={this.onChange}
-          placeholder="Enter username"
+          autoFocus
         />{' '}
         <button onClick={this.getRepos}>Get Repos</button>
         <div>
-          <h4>{username} repos</h4>
+          <h4>{username && `${username}'s repos`}</h4>
           {mapRepos}
         </div>
       </React.Fragment>
