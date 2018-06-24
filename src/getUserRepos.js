@@ -64,7 +64,6 @@ class GetUserRepos extends React.Component {
           placeholder="Enter username"
           value={username}
           onChange={this.onChange}
-          autoFocus
         />{' '}
         <button onClick={this.getRepos}>Get Repos</button>
         <div>
